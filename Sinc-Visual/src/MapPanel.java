@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class MapPanel extends JFrame {
     private Map map;
-    private int tileSize = 40;
+    private int tileSize = 8;
     private JButton startButton, resetButton, globalWindButton, localWindButton, stopButton;
     private MapPanelInner mapPanelInner;
     private final Random rnd = new Random();
@@ -182,8 +182,32 @@ public class MapPanel extends JFrame {
                     int x = i * tileSize + (tileSize - fm.stringWidth(text)) / 2;
                     int y = j * tileSize + (tileSize - fm.getHeight()) / 2 + fm.getAscent();
                     g.drawString(text, x, y);
+
+                    if (tile.getType() != 0 && tile.getType() != 5 && tile.getType() != 6) {
+                        drawWindDirection(g, i, j, tile.getWindDirection());
+                    }
                 }
             }
+        }
+
+        private void drawWindDirection(Graphics g, int i, int j, Direction dir) {
+            int startLineX = i * tileSize + tileSize / 4;
+            int startLineY = j * tileSize + tileSize / 4;
+            int arrowSize = tileSize / 6;
+
+            g.setColor(Color.ORANGE);
+            int endX = startLineX + dir.dx * arrowSize;
+            int endY = startLineY + dir.dy * arrowSize;
+            g.drawLine(startLineX, startLineY, endX, endY);
+
+            int arrSize = tileSize / 12;
+            int perpX = -dir.dy, perpY = dir.dx;
+            int arr1X = endX + (perpX - dir.dx) * arrSize;
+            int arr1Y = endY + (perpY - dir.dy) * arrSize;
+            int arr2X = endX + (-perpX - dir.dx) * arrSize;
+            int arr2Y = endY + (-perpY - dir.dy) * arrSize;
+            g.drawLine(endX, endY, arr1X, arr1Y);
+            g.drawLine(endX, endY, arr2X, arr2Y);
         }
 
         private Color getColorForType(int type) {

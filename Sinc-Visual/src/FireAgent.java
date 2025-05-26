@@ -76,7 +76,7 @@ public class FireAgent extends Agent {
 
                         // Adjust by wind direction of current tile
                         double cos = Direction.cos(t.getWindDirection(), dir);
-                        p += 0.20 * cos; // ±20%
+                        p += 0.50 * cos; // ±50%
                         p = Math.max(0.01, Math.min(0.99, p));
 
                         if (rnd.nextDouble() < p) {
@@ -117,7 +117,7 @@ public class FireAgent extends Agent {
         double U = t.getHumidity();
         double P = 0.58 + 0.44 * V - 0.38 * U;
         if (t.getType() == 1) P += 0.15; // Dry vegetation
-        if (t.getType() == 2) P -= 0.15; // Wet vegetation
+        if (t.getType() == 2) P -= 0.35; // Wet vegetation
         if (t.getFuel() < 0.8) P -= 0.10;
         if (t.getFuel() > 1.5) P += 0.10;
         return Math.max(0.05, Math.min(0.95, P));
