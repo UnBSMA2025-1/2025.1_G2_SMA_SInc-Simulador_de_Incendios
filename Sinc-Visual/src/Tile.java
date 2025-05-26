@@ -4,6 +4,16 @@ public class Tile {
     private double humidity, fuel, windVelocity, terrainHeight;
     private Direction windDirection;
 
+    private int fireIntensity = 0;
+
+    public int getFireIntensity() {
+        return fireIntensity;
+    }
+
+    public void setFireIntensity(int fireIntensity) {
+        this.fireIntensity = fireIntensity;
+    }
+
     //Constructor
     public Tile(int x, int y, int type, double humidity, double fuel, double windVelocity, Direction windDirection, float temperature, double terrainHeight) {
         this.x = x;

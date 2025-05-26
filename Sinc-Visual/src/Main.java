@@ -1,20 +1,31 @@
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.wrapper.AgentContainer;
+import jade.wrapper.AgentController;
+import jade.core.Runtime;
+
 import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        Map map = new Map(25, 15);
+        Runtime runtime = Runtime.instance();
+        Profile profile = new ProfileImpl();
+        AgentContainer container = runtime.createMainContainer(profile);
 
-        // Executa a criação da GUI na Event Dispatch Thread (EDT)
+        Map map = new Map(20, 20, container);
+
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Simulação de Incêndio Florestal");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
             MapPanel mapPanel = new MapPanel(map);
-            frame.add(mapPanel);
-
-            frame.pack(); // Ajusta o tamanho da janela ao conteúdo
-            frame.setLocationRelativeTo(null); // Centraliza a janela na tela
-            frame.setVisible(true);
+            map.gui = mapPanel;
+            mapPanel.setLocationRelativeTo(null);
+            mapPanel.setVisible(true);
         });
+
+        try {
+            AgentController sniffer = container.createNewAgent("sniffer", "jade.tools.sniffer.Sniffer", new Object[]{});
+            sniffer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
