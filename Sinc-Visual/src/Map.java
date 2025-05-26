@@ -3,10 +3,10 @@ import java.util.Random;
 public class Map {
     public static int WIDTH;
     public static int HEIGHT;
+    public static float AMBIENT_TEMPERATURE = 25;
     private Tile[][] tiles;
     public WindMode windMode = WindMode.LOCAL;
-    public int counter = -1;
-
+    public int counter = 0;
     private final Random rnd = new Random();
 
     public Map(int w, int h) {
@@ -40,11 +40,13 @@ public class Map {
                     type = 1 + rnd.nextInt(3);
                 }
 
+                float temperature = AMBIENT_TEMPERATURE + rnd.nextInt(-2, +2);
+                double terrainHeight= 1; // <===== here PEIXOTO
                 double humidity = 0.1 + 0.7 * rnd.nextDouble();
                 double fuel = 0.5 + 2.0 * rnd.nextDouble();
                 double windVel = 0.5 + 2.5 * rnd.nextDouble();
                 Direction windDir = Direction.values()[rnd.nextInt(Direction.values().length)];
-                tiles[x][y] = new Tile(x, y, type, humidity, fuel, windVel, windDir);
+                tiles[x][y] = new Tile(x, y, type, humidity, fuel, windVel, windDir, temperature, terrainHeight);
             }
         }
     }
