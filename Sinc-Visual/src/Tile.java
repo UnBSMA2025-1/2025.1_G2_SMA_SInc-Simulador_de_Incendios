@@ -27,6 +27,16 @@ public class Tile {
         this.terrainHeight = terrainHeight;
     }
 
+    public Tile(int x, int y, int type, double humidity, double fuel, double windVelocity, Direction windDirection) {
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.humidity = humidity;
+        this.fuel = fuel;
+        this.windVelocity = windVelocity;
+        this.windDirection = windDirection;
+    }
+
     //Getters
     public int getX() { return x; }
     public int getY() { return y; }
