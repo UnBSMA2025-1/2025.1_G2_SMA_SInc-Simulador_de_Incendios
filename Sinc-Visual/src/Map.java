@@ -7,10 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Map {
-    public static int WIDTH;
-    public static int HEIGHT;
+    public final int HEIGHT, WIDTH;
     public static float AMBIENT_TEMPERATURE = 25;
-    private Tile[][] tiles;
     public final Tile[][] map;
     public MapPanel gui;
     private final Random random = new Random();
