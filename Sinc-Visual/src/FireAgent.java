@@ -76,7 +76,9 @@ public class FireAgent extends Agent {
 
                         // Adjust by wind direction of current tile
                         double cos = Direction.cos(t.getWindDirection(), dir);
-                        p += 0.50 * cos; // ±50%
+                        if (cos != 0) {
+                            p += cos/2; // Até
+                        }
                         p = Math.max(0.01, Math.min(0.99, p));
 
                         if (rnd.nextDouble() < p) {
