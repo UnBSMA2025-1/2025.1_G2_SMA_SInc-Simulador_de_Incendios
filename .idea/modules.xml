@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/2025.1_G2_SMA_SInc-Simulador_de_Incendios.iml" filepath="$PROJECT_DIR$/.idea/2025.1_G2_SMA_SInc-Simulador_de_Incendios.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Sinc-VisualCompilador.iml" filepath="$PROJECT_DIR$/Sinc-VisualCompilador.iml" />
     </modules>
   </component>
 </project>
