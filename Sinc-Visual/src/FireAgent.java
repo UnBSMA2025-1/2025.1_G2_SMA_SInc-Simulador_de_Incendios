@@ -61,7 +61,26 @@ public class FireAgent extends Agent {
                 }
                 t.setFuel(Math.max(0, t.getFuel() - consumption));
 
-                // 2. Propagation (one attempt while fuel > 0)
+                if (t.getHumidity() > 0.1)
+                    t.setHumidity(Math.max(t.getHumidity() - 0.1, 0.1));
+
+                // 2. Possibility of fire running out
+                if (rnd.nextDouble() < 0.1) {
+                    if (t.getFuel() > 0.5) {
+                        if (t.getHumidity() > 0.5)
+                            t.setType(2); // Wet Vegetation
+                        else if (t.getHumidity() > 0.25)
+                            t.setType(3); // Normal Vegetation
+                        else
+                            t.setType(1); // Dry Vegetation
+                    } else
+                        t.setType(5); // Burnt
+
+                    t.setFireIntensity(0);
+                    doDelete();
+                }
+
+                // 3. Propagation (one attempt while fuel > 0)
                 if (!propagated && t.getFuel() > 0) {
                     for (Direction dir : Direction.values()) {
                         int nx = x + dir.dx;
@@ -78,7 +97,7 @@ public class FireAgent extends Agent {
                         double cos = Direction.cos(t.getWindDirection(), dir);
                         p *= ((cos+1.0)/2.0); // ((cos+1.0)/2.0) varia de 0 até 1
                         if (cos == 1) p += 0.15; // Direção do vento
-                        else if (cos == 0.5) p -= 0.15; // Impedir que vá muito para os lados
+                        else if (cos == 0.5) p -= 0.3; // Impedir que vá muito para os lados
                         else if (cos == 0) p -= 0.3; // Impedir que vá muito para os lados
                         else if (cos == -1) p += 0.1; // Só para não ser 0%
                         p = Math.max(0.01, Math.min(0.99, p));
@@ -90,19 +109,19 @@ public class FireAgent extends Agent {
                     propagated = true;
                 }
 
-                // 3. Update fire intensity
+                // 4. Update fire intensity
                 if (t.getFuel() > 0.7) t.setFireIntensity(3);
                 else if (t.getFuel() > 0.3) t.setFireIntensity(2);
                 else if (t.getFuel() > 0) t.setFireIntensity(1);
 
-                // 4. Extinguish fire if no fuel
+                // 5. Extinguish fire if no fuel
                 if (t.getFuel() == 0) {
                     t.setType(5); // Burnt
                     t.setFireIntensity(0);
                     doDelete();
                 }
 
-                // 5. Update GUI
+                // 6. Update GUI
                 if (map.getGui() != null) {
                     map.getGui().repaint();
                 }
