@@ -1,5 +1,3 @@
-import jade.wrapper.AgentController;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
@@ -11,8 +9,6 @@ public class MapPanel extends JFrame {
     private MapPanelInner mapPanelInner;
     private final Random rnd = new Random();
     private Thread simulationThread;
-    public static boolean activeSeedsOnGoing = false;
-
 
     public MapPanel(Map map) {
         this.map = map;
@@ -29,24 +25,17 @@ public class MapPanel extends JFrame {
         startButton = new JButton("Iniciar Simulação");
         startButton.addActionListener(e -> startSimulation());
         buttonsPanel.add(startButton);
-        if(map.firstMap != 0){
-        startButton.setEnabled(false);}
 
-
-        resetButton = new JButton("Gerar Mapa");
-        resetButton.addActionListener(e -> generateMap());
+        resetButton = new JButton("Reiniciar Mapa");
+        resetButton.addActionListener(e -> resetMap());
         buttonsPanel.add(resetButton);
 
         localWindButton = new JButton("Vento Local");
         localWindButton.addActionListener(e -> setLocalWind());
         buttonsPanel.add(localWindButton);
-        if(map.firstMap != 0){localWindButton.setEnabled(false);}
-
 
         globalWindButton = new JButton("Vento Global");
         globalWindButton.addActionListener(e -> setGlobalWind());
-        if(map.firstMap != 0){globalWindButton.setEnabled(false);}
-
         buttonsPanel.add(globalWindButton);
 
         stopButton = new JButton("Parar Simulação");
@@ -68,10 +57,6 @@ public class MapPanel extends JFrame {
         add(legendPanel, BorderLayout.NORTH);
 
         setVisible(true);
-    }
-
-    public static void setActiveSeed(boolean i) {
-        activeSeedsOnGoing = i;
     }
 
     private void startSimulation() {
@@ -126,40 +111,6 @@ public class MapPanel extends JFrame {
         localWindButton.setEnabled(true);
         stopButton.setEnabled(false);
     }
-
-    private void generateMap() {
-        startButton.setEnabled(false);
-        resetButton.setEnabled(false);
-        localWindButton.setEnabled(false);
-        globalWindButton.setEnabled(false);
-        stopButton.setEnabled(false);
-
-        new Thread(() -> {
-            map.stopAllSeedStatusAgents();
-            activeSeedsOnGoing = true;
-            map.reset();
-            map.createSeedStatusAgent();
-            // aguarda todos os SeedAgents terminarem
-            while (activeSeedsOnGoing) {
-                try {
-                    Thread.sleep(500); // espera para não travar a CPU
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
-            map.stopAllSeedStatusAgents();
-            SwingUtilities.invokeLater(() -> {
-                map.terrainData();
-                repaint();
-                startButton.setEnabled(true);
-                resetButton.setEnabled(true);
-                localWindButton.setEnabled(true);
-                globalWindButton.setEnabled(true);
-            });
-        }).start();
-    }
-
 
     private void resetMap() {
         stopSimulation();
@@ -271,6 +222,5 @@ public class MapPanel extends JFrame {
                 default: return Color.BLACK;
             }
         }
-
     }
 }

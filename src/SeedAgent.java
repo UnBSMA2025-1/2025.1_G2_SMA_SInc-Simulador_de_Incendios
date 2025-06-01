@@ -1,5 +1,11 @@
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 
 import java.util.Random;
 
@@ -36,7 +42,23 @@ public class SeedAgent extends Agent {
         }
         tile.setType(vegetationType);
 
-        // intervalo de 200ms
+        // DF register
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("seed");
+        sd.setName(getLocalName() + "-seed");
+        dfd.addServices(sd);
+
+        try {
+            DFService.register(this, dfd);
+            //System.out.println(getLocalName() + " registrado no DF como 'seed'");
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
+
+
+        // expansão
         addBehaviour(new TickerBehaviour(this, 200) {
             private int ticks = 0;
 
@@ -67,7 +89,26 @@ public class SeedAgent extends Agent {
 
                 ticks++;
                 if (ticks >= 3) {  // ciclos p morrer
+                    map.removeSeedAgent(getLocalName());
+
                     doDelete();
+                }
+            }
+        });
+
+        // responder com vivo!
+        addBehaviour(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                ACLMessage msg = receive();
+                if (msg != null) {
+                    if ("vivo?".equals(msg.getContent())) {
+                        ACLMessage reply = msg.createReply();
+                        reply.setContent("vivo!");
+                        send(reply);
+                    }
+                } else {
+                    block();
                 }
             }
         });
@@ -75,8 +116,14 @@ public class SeedAgent extends Agent {
 
     @Override
     protected void takeDown() {
+        try {
+            DFService.deregister(this);
+            //System.out.println(getLocalName() + " desregistrado do DF");
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
         map.removeSeedAgent(getLocalName());
-        System.out.println("Morri");
+        //System.out.println("Morri");
         super.takeDown();
     }
 }

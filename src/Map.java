@@ -16,6 +16,7 @@ public class Map {
 
     private final Set<String> activeFireAgents = new HashSet<>();
     public final Set<String> activeSeedAgents = new HashSet<>();
+    public final Set<String> activeSeedStatusAgents = new HashSet<>();
 
     public int firstMap = 0;
 
@@ -44,30 +45,32 @@ public class Map {
         }
         if(firstMap != 0){
         int numberOfSeeds = WIDTH*HEIGHT/10;
-        for (int i = 0; i < numberOfSeeds; i++) {
-            int x, y;
-            do {
-                x = random.nextInt(WIDTH);
-                y = random.nextInt(HEIGHT);
-            } while (map[x][y].getType() != 0);
-
-            createSeedAgent(x, y); // gera vegetação tipo 1 a 3
-        }
         int numberOfWaterSeeds = WIDTH*HEIGHT/100;
         if (numberOfWaterSeeds == 0){
             numberOfWaterSeeds = random.nextInt(0, 4);
         }
-        for (int i = 0; i < numberOfWaterSeeds; i++) {
+        int k = 0;
+        for (int i = 0; i < numberOfSeeds; i++) {
             int x, y;
+            k++;
             do {
                 x = random.nextInt(WIDTH);
                 y = random.nextInt(HEIGHT);
             } while (map[x][y].getType() != 0);
+            createSeedAgent(x, y); // gera vegetação tipo 1 a 3
 
-            createSeedAgent(x, y, 6); // gera água
-        }
-        }
-        firstMap++;
+            if(k <= numberOfWaterSeeds){
+                do {
+                    x = random.nextInt(WIDTH);
+                    y = random.nextInt(HEIGHT);
+                } while (map[x][y].getType() != 0);
+                createSeedAgent(x, y, 6); // gera água
+
+            }
+
+        }}
+
+        firstMap = 111;
 
     }
 
@@ -196,6 +199,31 @@ public class Map {
         activeSeedAgents.clear();
     }
 
+    public void createSeedStatusAgent(){
+        try {
+            String agentName = "SeedStatusAgent_" + UUID.randomUUID();
+            container.createNewAgent(agentName, "SeedStatusAgent", null).start();
+            activeSeedStatusAgents.add(agentName);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void stopAllSeedStatusAgents() {
+        Set<String> agentsCopy = new HashSet<>(activeSeedStatusAgents);
+        for (String agentName : agentsCopy) {
+            try {
+                AgentController ac = container.getAgent(agentName);
+                if (ac != null) {
+                    ac.kill();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        activeSeedStatusAgents.clear();
+    }
 
     public boolean hasFire() {
         for (int x = 0; x < WIDTH; x++)
