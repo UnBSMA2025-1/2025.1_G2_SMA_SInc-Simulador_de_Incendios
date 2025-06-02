@@ -75,40 +75,6 @@ class ImageToMapConverter:
         """Check if pixel is within color range"""
         return np.all(pixel >= color_range['lower']) and np.all(pixel <= color_range['upper'])
 
-    def classify_with_clustering(self, image, n_clusters=6):
-        """Use K-means clustering to classify terrain types"""
-        # Reshape image for clustering
-        pixels = image.reshape(-1, 3)
-
-        # Normalize pixel values
-        scaler = StandardScaler()
-        pixels_normalized = scaler.fit_transform(pixels.astype(np.float32))
-
-        # Apply K-means clustering
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-        labels = kmeans.fit_predict(pixels_normalized)
-
-        # Reshape back to image dimensions
-        clustered_image = labels.reshape(image.shape[:2])
-
-        # Map clusters to tile types based on cluster centers
-        cluster_centers = scaler.inverse_transform(kmeans.cluster_centers_)
-        tile_mapping = self._map_clusters_to_tiles(cluster_centers)
-
-        return clustered_image, tile_mapping
-
-    def _map_clusters_to_tiles(self, cluster_centers):
-        mapping = {}
-
-        for i, center in enumerate(cluster_centers):
-            bgr_color = np.uint8([[center]])
-            hsv_color = cv2.cvtColor(bgr_color, cv2.COLOR_BGR2HSV)[0][0]
-
-            tile_type = self.classify_pixel_by_color(hsv_color)
-            mapping[i] = tile_type
-
-        return mapping
-
     def generate_environmental_properties(self, tile_type):
         """Generate realistic environmental properties for each tile type"""
         np.random.seed()  # Ensure randomness
@@ -154,13 +120,6 @@ class ImageToMapConverter:
             for y in range(map_height):
                 for x in range(map_width):
                     tile_map[y, x] = self.classify_pixel_by_color(hsv_image[y, x])
-
-        elif method == 'clustering':
-            clustered_image, tile_mapping = self.classify_with_clustering(bgr_image)
-            tile_map = np.zeros_like(clustered_image)
-            for cluster_id, tile_type in tile_mapping.items():
-                tile_map[clustered_image == cluster_id] = tile_type
-
         else:
             raise ValueError("Method must be 'color' or 'clustering'")
 
