@@ -61,13 +61,33 @@ public class FireAgent extends Agent {
                 }
                 activeTile.setFuel(Math.max(0, activeTile.getFuel() - consumption));
 
-                // 2. Propagation
+                // 2. Lowering Humidity
+                if (activeTile.getHumidity() > 0.1)
+                    activeTile.setHumidity(Math.max(activeTile.getHumidity() - 0.1, 0.1));
+
+                // 3. Possibility of fire running out
+                if (rnd.nextDouble() < 0.1) {
+                    if (activeTile.getFuel() > 0.5) {
+                        if (activeTile.getHumidity() > 0.5)
+                            activeTile.setType(2); // Wet Vegetation
+                        else if (activeTile.getHumidity() > 0.25)
+                            activeTile.setType(3); // Normal Vegetation
+                        else
+                            activeTile.setType(1); // Dry Vegetation
+                    } else
+                        activeTile.setType(5); // Burnt
+
+                    activeTile.setFireIntensity(0);
+                    doDelete();
+                }
+
+                // 4. Propagation
                 firePropagationAndProbability(activeTile, propagated);
 
-                // 3. Update fire intensity
+                // 5. Update fire intensity
                 setIntensityFireColorCondition(activeTile);
 
-                // 5. Update GUI
+                // 6. Update GUI
                 stateUpdateMap();
             }
 
@@ -126,8 +146,7 @@ public class FireAgent extends Agent {
         double cos = Direction.cos(t.getWindDirection(), dir);
         p *= ((cos+1.0)/2.0); // ((cos+1.0)/2.0) varia de 0 até 1
         if (cos == 1) p += 0.15; // Direção do vento
-        else if (cos == 0.5) p -= 0.15; // Impedir que vá muito para os lados
-        else if (cos == 0) p -= 0.3; // Impedir que vá muito para os lados
+        else if (cos == 0 || cos == 0.5) p -= 0.3; // Impedir que vá muito para os lados
         else if (cos == -1) p += 0.1; // Só para não ser 0%
         p = Math.max(0.01, Math.min(0.99, p));
         return p;
