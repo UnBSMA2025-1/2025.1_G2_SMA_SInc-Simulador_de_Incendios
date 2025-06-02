@@ -27,7 +27,7 @@ public class ImageMapConverter {
         String imagePath = args[0];
         String pythonScriptPath = args[1];
 
-        ContainerController container = null; // Initialize with your container
+        ContainerController container = null;
 
         EnhancedMap map = createMapFromImage(imagePath, pythonScriptPath, 50, 50, container);
 
