@@ -16,6 +16,8 @@ public class Map {
     public WindMode windMode = WindMode.LOCAL;
 
     private final Set<String> activeFireAgents = new HashSet<>();
+    private AgentController windAgentController;
+    private String windAgentName;
 
     public Map(int width, int height, ContainerController container) {
         this.WIDTH = width;
@@ -23,6 +25,7 @@ public class Map {
         this.container = container;
         this.map = new Tile[WIDTH][HEIGHT];
         initialize();
+        createWindAgent();
     }
 
     public void initialize() {
@@ -41,6 +44,47 @@ public class Map {
 
                 map[x][y] = new Tile(x, y, type, humidity, fuel, windVelocity, windDirection);
             }
+        }
+    }
+
+    private void createWindAgent() {
+        try {
+            windAgentName = "WindAgent_" + UUID.randomUUID();
+            windAgentController = container.createNewAgent(windAgentName, "WindAgent", new Object[]{this});
+            windAgentController.start();
+            System.out.println("WindAgent created: " + windAgentName);
+        } catch (Exception e) {
+            System.err.println("Failed to create WindAgent: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void setWindMode(WindMode mode) {
+        this.windMode = mode;
+        System.out.println("Wind mode changed to: " + mode);
+
+        if (mode == WindMode.LOCAL) {
+            // Reset all tiles to local wind patterns
+            resetToLocalWind();
+        }
+        // Global wind will be applied automatically by WindAgent when mode is GLOBAL
+    }
+
+    private void resetToLocalWind() {
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                Tile tile = map[x][y];
+                if (tile != null) {
+                    // Regenerate local wind properties
+                    double windVelocity = 0.5 + 2.5 * random.nextDouble();
+                    Direction windDirection = Direction.values()[random.nextInt(Direction.values().length)];
+                    tile.setWindVelocity(windVelocity);
+                    tile.setWindDirection(windDirection);
+                }
+            }
+        }
+        if (gui != null) {
+            gui.repaint();
         }
     }
 
@@ -89,6 +133,18 @@ public class Map {
         activeFireAgents.clear();
     }
 
+    public void stopWindAgent() {
+        if (windAgentController != null) {
+            try {
+                windAgentController.kill();
+                System.out.println("WindAgent stopped: " + windAgentName);
+            } catch (Exception e) {
+                System.err.println("Failed to stop WindAgent: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
     public boolean hasFire() {
         for (int x = 0; x < WIDTH; x++)
             for (int y = 0; y < HEIGHT; y++)
@@ -123,7 +179,14 @@ public class Map {
 
     public void reset() {
         stopAllFireAgents(); // Para todos os agentes antes de reiniciar
+        stopWindAgent(); // Para o agente de vento
         initialize();
+        createWindAgent(); // Recria o agente de vento
         if (gui != null) gui.repaint();
+    }
+
+    // Method to get wind agent name for external communication
+    public String getWindAgentName() {
+        return windAgentName;
     }
 }
