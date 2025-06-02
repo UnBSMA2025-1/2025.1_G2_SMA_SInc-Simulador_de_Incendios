@@ -44,14 +44,15 @@ public class Map {
         if (success) {
             System.out.println("Map loaded from image successfully!");
             System.out.println(this.generateImageReport());
+            createWindAgent();
 
             return;
         } else {
             System.out.println("Using random generated map instead");
         }
 
-        initialize();
         createWindAgent();
+        initialize();
 
     }
 
@@ -218,7 +219,7 @@ public class Map {
         return windAgentName;
     }
 
-}
+
     /**
      * Load map from image using Python ML script
      */
