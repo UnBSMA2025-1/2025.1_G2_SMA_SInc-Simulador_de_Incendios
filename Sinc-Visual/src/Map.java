@@ -6,6 +6,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import jade.lang.acl.ACLMessage;
+import jade.core.Agent;
+import jade.core.AgentContainer;
+import jade.lang.acl.ACLMessage;
+
+
 public class Map {
     public final int HEIGHT, WIDTH;
     public static float AMBIENT_TEMPERATURE = 25;
@@ -149,6 +155,7 @@ public class Map {
         for (int x = 0; x < WIDTH; x++)
             for (int y = 0; y < HEIGHT; y++)
                 if (map[x][y].getType() == 4) return true;
+
         return false;
     }
 
@@ -189,4 +196,5 @@ public class Map {
     public String getWindAgentName() {
         return windAgentName;
     }
+
 }

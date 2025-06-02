@@ -46,22 +46,22 @@ public class WindAgent extends Agent {
             updateGlobalWind();
             if (map != null && map.windMode == WindMode.GLOBAL) {
                 applyGlobalWindToMap();
+
             }
         }
     }
 
     private void updateGlobalWind() {
-        double changeProb = 0.5;
+        double changeProb = 0.3;
 
         if (random.nextDouble() < changeProb) {
-            if (random.nextDouble() < 0.7) {
-                shiftWindDirection();
-            } else {
-                globalWindDirection = Direction.values()[random.nextInt(Direction.values().length)];
-            }
+            shiftWindDirection();
+        }
+        else {
+            globalWindDirection = Direction.values()[random.nextInt(Direction.values().length)];
         }
 
-        double velocityChange = (random.nextDouble() - 0.5) * 0.5; // ±0.25 m/s change
+        double velocityChange = (random.nextDouble() - 0.5) * 0.8;
         globalWindVelocity = Math.max(0.5, Math.min(4.0, globalWindVelocity + velocityChange));
 
         System.out.println("Global wind updated: " + globalWindDirection + " at " +
@@ -72,7 +72,6 @@ public class WindAgent extends Agent {
         Direction[] directions = Direction.values();
         int currentIndex = globalWindDirection.ordinal();
 
-        // Get adjacent directions (cyclically)
         int nextIndex = (currentIndex + 1) % directions.length;
         int prevIndex = (currentIndex - 1 + directions.length) % directions.length;
 
@@ -101,6 +100,7 @@ public class WindAgent extends Agent {
         }
     }
 
+
     private class WindRequestBehaviour extends CyclicBehaviour {
         @Override
         public void action() {
@@ -114,13 +114,27 @@ public class WindAgent extends Agent {
                 if ("GET_WIND_INFO".equals(content)) {
                     reply.setPerformative(ACLMessage.INFORM);
                     reply.setContent(globalWindDirection.name() + "," + globalWindVelocity);
-                } else {
+                    send(reply);
+                }
+                else if (content.startsWith("TERMINATE:")) {
+                    String reason = content.substring(10); // Remove "TERMINATE:" prefix
+                    System.out.println("WindAgent received termination request: " + reason);
+
+                    reply.setPerformative(ACLMessage.CONFIRM);
+                    reply.setContent("TERMINATING");
+                    send(reply);
+
+                    doDelete();
+                    return;
+                }
+                else {
                     reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
                     reply.setContent("Unknown request: " + content);
+                    send(reply);
                 }
 
-                send(reply);
-            } else {
+            }
+            else {
                 block();
             }
         }
