@@ -76,19 +76,36 @@ O Simulador de Incêndios Florestais, serve para se ter uma noção simplificada
 - Ainda será adicionado
 
 ## Participações
-Apresente, brevemente, como cada membro do grupo contribuiu para o projeto.
+
 | Nome do Membro | Contribuição | Significância da Contribuição para o Projeto (Excelente/Boa/Regular/Ruim/Nula) | Comprobatórios (ex. links para commits) |
 |---|---|---|---|
 | Davi Monteiro de Negreiros | Responsável por Construção do Mapa e da Interface Gráfica do Simulador | Boa | [Commits](https://github.com/UnBSMA2025-1/2025.1_G2_SMA_SInc-Simulador_de_Incendios/commits?author=DaviNegreiros) |
 | Gabriel Ferreira da Silva | Responsável pelo Agente Fogo e suas interações básicas com o Ambiente | Boa | [Commits](https://github.com/UnBSMA2025-1/2025.1_G2_SMA_SInc-Simulador_de_Incendios/commits?author=oo7gabriel) |
 | Guilherme Peixoto Lima | Responsável pelo Agente Vento e suas interações com o ambiente e geração de mapas | Boa | [Commits](https://github.com/UnBSMA2025-1/2025.1_G2_SMA_SInc-Simulador_de_Incendios/commits?author=guipeeix7) |
 | João Matheus de Oliveira Schmitz | Responsável pelo Geração, Construção de Mapa e Vento | Boa | [Commits](https://github.com/UnBSMA2025-1/2025.1_G2_SMA_SInc-Simulador_de_Incendios/commits?author=JoaoSchmitz) |
+
 ## Outros 
-Quaisquer outras informações sobre o projeto podem ser descritas aqui. Não esqueça, entretanto, de informar sobre:
-(i) Lições Aprendidas;
-(ii) Percepções;
-(iii) Contribuições e Fragilidades, e
-(iV) Trabalhos Futuros.
+
+### Lições Aprendidas
+
+- Ao desenvolver o projeto, a equipe percebeu que criar uma simulação de algo tão complexo como o fogo é um desafio maior e mais interessante do que iniciamente pensávamos, o que nos levou a decisão de simplificar nosso projeto em relação às nossas ideias iniciais.
+- A equipe aprendeu muito sobre a utilização do paradigma de Multi Agentes ao implementar vários agentes com propósitos distintos em um mesmo ambiente. O interesse da equipe neste quesito foi bem grande, sendo comum a ocorrência de discussões sobre possíveis melhorias que poderíamos trazer ao projeto no futuro, ou de como o paradigma se compara à outros em certas situações.
+- No geral, pode-se dizer que, embora a equipe tenha tido problemas iniciais na implementação do paradigma, nós aprendemos o suficiente para implementá-lo em situações relativamente complexas.
+
+### Trabalhos Futuros
+
+Como dito no tópico anterior, nosso projeto foi simplificado comparado com nossas ideias iniciais, sem falar naquelas que descartamos por falta de tempo para a implementação. Após diversas discussões, a equipe levantou vários aspectos onde o projeto pode evoluir. Alguns exemplos são:
+
+- Implementação da altitude de um Tile e sua influência na direção e velocidade do vento;
+- Implementação completa das fórmulas de propagação de fogo;
+- Ajustes na influência do vento na propagação do fogo;
+- Implementação de agentes bombeiro que apagam o fogo e/ou tomam precauções para que ele não se espalhe;
+- Simulação do comportamento de animais silvestres em situações de incêndio florestal;
+- Trazer opções para que o usuário:
+  - Faça upload de fotos para que estas se transformem em mapas;
+  - Escolha o local inicial de um foco de incêndio;
+  - Escolha a localização de bases para os agentes bombeiro, para testar qual a melhor posição;
+- Entre outras possibilidades.
 
 ## Fontes
 
