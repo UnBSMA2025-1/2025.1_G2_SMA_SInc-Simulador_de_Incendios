@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class MapPanel extends JFrame {
     private Map map;
-    private int tileSize = 8;
+    private int tileSize = 30;
     private JButton startButton, resetButton, globalWindButton, localWindButton, stopButton;
     private MapPanelInner mapPanelInner;
     private final Random rnd = new Random();
@@ -169,7 +169,7 @@ public class MapPanel extends JFrame {
             for (int i = 0; i < map.WIDTH; i++) {
                 for (int j = 0; j < map.HEIGHT; j++) {
                     Tile tile = map.map[i][j];
-                    g.setColor(getColorForType(tile.getType()));
+                    g.setColor(getColorForType(tile));
                     g.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
 
                     g.setColor(Color.BLACK);
@@ -210,16 +210,30 @@ public class MapPanel extends JFrame {
             g.drawLine(endX, endY, arr2X, arr2Y);
         }
 
-        private Color getColorForType(int type) {
-            switch (type) {
+        private Color getColorForType(Tile tile) {
+            switch (tile.getType()) {
                 case 0: return new Color(85, 58, 46); // Sem Vegetação (marrom)
                 case 1: return new Color(200, 255, 0); // Vegetação Seca (verde-amarelado)
                 case 2: return new Color(0, 100, 0); // Vegetação Úmida (verde escuro)
                 case 3: return new Color(0, 255, 0); // Vegetação Comum (verde)
-                case 4: return new Color(255, 0, 0); // Em Chamas (vermelho)
+                case 4:
+                    return getColorFireIntensity(tile); // Em Chamas (vermelho)
                 case 5: return new Color(170, 170, 170); // Queimado (cinza)
                 case 6: return new Color(30, 144, 255); // Água (azul)
                 default: return Color.BLACK;
+            }
+        }
+
+        private static Color getColorFireIntensity(Tile tile) {
+            switch (tile.getFireIntensity()) {
+                case 1:
+                    return new Color(182, 149, 0);
+                case 2:
+                    return new Color(255, 100, 0);
+                case 3:
+                    return new Color(255, 0, 0);
+                default:
+                    return Color.RED;
             }
         }
     }

@@ -12,7 +12,7 @@ public class Main {
         Profile profile = new ProfileImpl();
         AgentContainer container = runtime.createMainContainer(profile);
 
-        Map map = new Map(200, 120, container);
+        Map map = new Map(30, 20, container);
 
         SwingUtilities.invokeLater(() -> {
             MapPanel mapPanel = new MapPanel(map);
