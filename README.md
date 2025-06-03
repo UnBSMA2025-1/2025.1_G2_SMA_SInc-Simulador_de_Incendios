@@ -38,17 +38,23 @@ Considerando, também diferentes elementos do ambiente.
 Esse simulador de incêndios, é apenas um modelo ou uma simulação teórica. Considerando aspectos básicos do fogo e do ambiente ao seu redor.
 
 ## Screenshots
-![img.png](img.png)
 
-Imagem da Interface Rodando
+![gif_1](gif_1.gif)
 
-![img_2.png](img_2.png)
+Geração do mapa usando os SeedAgents
 
-Imagem do Incêndio Ocorrendo
+![gif_2](gif_2.gif)
+
+Atuação do fogo na simulação
 
 ![img_1.png](img_1.png)
 
 Imagem do Sniffer com os agentes gerados
+
+![img_5.png](img_5.png)
+
+Relatório 
+
 
 ## Instalação 
 **Linguagens**: JAVA e Python<br>
