@@ -26,7 +26,9 @@ Um exemplo é a formula de Rothermel:
 - **ρ_b **: Densidade aparente do combustível (massa por volume).
 - **ε **: Eficiência da combustão (fração da energia liberada que contribui para a propagação).
 - **Q_ig**: Energia necessária para ignição do combustível (calor de ignição).
-E a formula de Monte Alegre:
+
+
+####  Formula de Monte Alegre:
 
 ![img_4.png](img_4.png)
 
@@ -67,9 +69,12 @@ Adicione a lib via ```File > Project Structure```
 
 E depois configure no ```Edit Configuration > Application```, com a main class sendo o Main e o argumentos sendo o ```-gui```
 
+
+[Exemplo de Instalação do Jade no Intellij](https://www.youtube.com/watch?v=DJTJNHxFkvc&pp=ygUVaW50ZWxsaWogbXVsdGkgYWdlbnRl)
+
 ### Como rodar o código Python
 
-É necessário ter instalado o python e o pip instalado para rodaar o código abaixo:
+É necessário ter instalado o python e o pip instalado para rodar o código abaixo:
 
 ```
 pip install opencv-python numpy scikit-learn matplotlib pillow
@@ -101,11 +106,32 @@ O Simulador de Incêndios Florestais, serve para se ter uma noção simplificada
 - A equipe aprendeu muito sobre a utilização do paradigma de Multi Agentes ao implementar vários agentes com propósitos distintos em um mesmo ambiente. O interesse da equipe neste quesito foi bem grande, sendo comum a ocorrência de discussões sobre possíveis melhorias que poderíamos trazer ao projeto no futuro, ou de como o paradigma se compara à outros em certas situações.
 - No geral, pode-se dizer que, embora a equipe tenha tido problemas iniciais na implementação do paradigma, nós aprendemos o suficiente para implementá-lo em situações relativamente complexas.
 
+### Percepções
+
+O grupo teve certa, facilidade ao subir projeto e entender onde queríamos chegar para o completar a entrega do projeto, e ao longo do desenvolvimento foi possível identificar que no ramo de desatres naturais e incêndios é possível adicionar mais pontos em projetos futuros, o que pode ser uma ideia interessante de se desenvolver. Em relação aos multi agentes, o grupo percebeu a volatilidade de se trabalhar e entender inicialmente com multi agentes e isso trouxe oportunidades de aprendizados para o grupo. 
+
+### Contribuições e Fragilidades
+
+##### Contribuições
+O Grupo realizou a seguintes contribuições:
+
+- Adicionado com sucesso um modelo inicial de Agente Fogo
+- Adicionado um gerador de mapas contínuos sem imagens
+- Adicionado um gerador de mapas a partir de imagens reais
+- Desenvolvimento de Agentes de Vento para influenciar na direção do vento e Agente Seed para ajudar na criação dos mapas.
+- Desenvolvimento do interface gráfica interativa, com diferentes tipos de possibildades de iniciar o programa.
+
+##### Fragilidades
+
+- Em computadores fracos o projeto pode travar quando o opção gerar mapa é usada, devido a quantidade de agentes criados o que aumenta a quantidade de processamento
+- É necessário rodar o projeto que está no nível de arquivo do SInc-Visual, pelo intellij, e configurar adicionando a lib do jade. 
+- O programa pode sofrer alguns bugs, em casos em que contínua mudança de modo global para modo local.
+
 ### Trabalhos Futuros
 
-Como dito no tópico anterior, nosso projeto foi simplificado comparado com nossas ideias iniciais, sem falar naquelas que descartamos por falta de tempo para a implementação. Após diversas discussões, a equipe levantou vários aspectos onde o projeto pode evoluir. Alguns exemplos são:
+Como dito no tópico anterior, o nosso projeto foi simplificado comparado com as nossas ideias iniciais, sem falar naquelas que descartamos por falta de tempo para a implementação. Após diversas discussões, a equipe levantou vários aspectos onde o projeto pode evoluir. Alguns exemplos são:
 
-- Implementação da altitude de um Tile e sua influência na direção e velocidade do vento;
+- Implementação da altitude de um Tile e a sua influência na direção e velocidade do vento;
 - Implementação completa das fórmulas de propagação de fogo;
 - Ajustes na influência do vento na propagação do fogo;
 - Implementação de agentes bombeiro que apagam o fogo e/ou tomam precauções para que ele não se espalhe;
