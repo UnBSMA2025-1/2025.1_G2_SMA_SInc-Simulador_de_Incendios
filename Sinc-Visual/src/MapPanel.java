@@ -1,7 +1,9 @@
-import jade.wrapper.AgentController;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Random;
 
 public class MapPanel extends JFrame {
@@ -12,6 +14,7 @@ public class MapPanel extends JFrame {
     private final Random rnd = new Random();
     private Thread simulationThread;
     public static boolean activeSeedsOnGoing = false;
+    private java.util.Map<Integer, BufferedImage> tileImages;
 
 
     public MapPanel(Map map) {
@@ -19,8 +22,16 @@ public class MapPanel extends JFrame {
         map.gui = this;
         setTitle("Simulação de Incêndio Florestal");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(map.WIDTH * tileSize, map.HEIGHT * tileSize + 160);
+        setSize(map.WIDTH * tileSize + 15, map.HEIGHT * tileSize + 160);
         setLayout(new BorderLayout());
+
+        try {
+            loadTileImages();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar imagens!", "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         mapPanelInner = new MapPanelInner();
         add(mapPanelInner, BorderLayout.CENTER);
@@ -68,6 +79,19 @@ public class MapPanel extends JFrame {
         add(legendPanel, BorderLayout.NORTH);
 
         setVisible(true);
+    }
+
+    private void loadTileImages() throws IOException {
+        tileImages = new HashMap<>();
+        tileImages.put(0, ImageIO.read(getClass().getResource("/public/dirt.png")));
+        tileImages.put(1, ImageIO.read(getClass().getResource("/public/dry_vegetation.jpg")));
+        tileImages.put(2, ImageIO.read(getClass().getResource("/public/wet_vegetation.jpg")));
+        tileImages.put(3, ImageIO.read(getClass().getResource("/public/common_vegetation.jpg")));
+        tileImages.put(41, ImageIO.read(getClass().getResource("/public/low_fire.jpg")));
+        tileImages.put(42, ImageIO.read(getClass().getResource("/public/medium_fire.jpg")));
+        tileImages.put(43, ImageIO.read(getClass().getResource("/public/strong_fire.jpg")));
+        tileImages.put(5, ImageIO.read(getClass().getResource("/public/burned.jpg")));
+        tileImages.put(6, ImageIO.read(getClass().getResource("/public/water.jpg")));
     }
 
     public static void setActiveSeed(boolean i) {
@@ -218,14 +242,28 @@ public class MapPanel extends JFrame {
             for (int i = 0; i < map.WIDTH; i++) {
                 for (int j = 0; j < map.HEIGHT; j++) {
                     Tile tile = map.map[i][j];
-                    g.setColor(getColorForType(tile));
-                    g.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
+                    BufferedImage img;
+
+                    if (tile.getType() == 4) {
+                        img = tileImages.get(40+tile.getFireIntensity());
+                    } else {
+                        img = tileImages.get(tile.getType());
+                    }
+
+                    if (img != null) {
+                        g.drawImage(img, i * tileSize, j * tileSize, tileSize, tileSize, this);
+                    } else {
+                        // Se a imagem não for encontrada, desenha um quadrado preto como fallback
+                        g.setColor(getColorForType(tile));
+                        g.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
+                    }
+
 
                     g.setColor(Color.BLACK);
                     g.drawRect(i * tileSize, j * tileSize, tileSize, tileSize);
 
                     // Adiciona o número do tile
-                    g.setColor(Color.BLACK); // Cor do texto
+                    g.setColor(Color.WHITE); // Cor do texto
                     String text = String.valueOf(tile.getType());
                     FontMetrics fm = g.getFontMetrics();
                     int x = i * tileSize + (tileSize - fm.stringWidth(text)) / 2;
@@ -259,6 +297,7 @@ public class MapPanel extends JFrame {
             g.drawLine(endX, endY, arr2X, arr2Y);
         }
 
+        // Cores para casos de falha no carregamento das imagens
         private Color getColorForType(Tile tile) {
             switch (tile.getType()) {
                 case 0: return new Color(85, 58, 46); // Sem Vegetação (marrom)
