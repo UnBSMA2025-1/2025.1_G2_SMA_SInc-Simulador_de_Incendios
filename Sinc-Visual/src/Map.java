@@ -5,11 +5,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import jade.lang.acl.ACLMessage;
 import jade.core.Agent;
@@ -29,7 +25,8 @@ public class Map {
     private final Set<String> activeFireAgents = new HashSet<>();
     public final Set<String> activeSeedAgents = new HashSet<>();
     public final Set<String> activeSeedStatusAgents = new HashSet<>();
-
+    private List<String> activeFirefighterAgents = new ArrayList<>();
+    private boolean firefightersEnabled = false;
     public int firstMap = 0;
 
 
@@ -43,7 +40,8 @@ public class Map {
         this.map = new Tile[WIDTH][HEIGHT];
 
         boolean success = this.loadFromImage(
-                "./Sinc-Visual/src/public/forest_image3.png",
+                "./Sinc-Visual/src/public/forest_image3" +
+                        ".png",
                 "./Sinc-Visual/src/image_to_map_converter.py"
         );
 
@@ -52,6 +50,8 @@ public class Map {
             System.out.println(this.generateImageReport());
             createWindAgent();
 
+            enableFirefighters(true);
+            createRandomFirefighters(7);
             return;
         } else {
             System.out.println("Using random generated map instead");
@@ -60,6 +60,8 @@ public class Map {
         createWindAgent();
         initialize();
 
+        enableFirefighters(true);
+        createRandomFirefighters(1);
     }
 
     public void initialize() {
@@ -561,4 +563,93 @@ public class Map {
             public TileData() {}
         }
 
+        public void createFirefighterAgent(int x, int y) {
+            // Check if position is valid
+            if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
+                System.err.println("Invalid position for firefighter agent: (" + x + ", " + y + ")");
+                return;
+            }
+
+            // Check if tile is passable (not water)
+            Tile tile = getTile(x, y);
+            if (tile != null && tile.getType() == 6) {
+                System.err.println("Cannot place firefighter agent on water tile: (" + x + ", " + y + ")");
+                return;
+            }
+
+            try {
+                String agentName = "FirefighterAgent_" + x + "_" + y + "_" + UUID.randomUUID();
+                container.createNewAgent(agentName, "FirefighterAgent", new Object[]{x, y, this}).start();
+                activeFirefighterAgents.add(agentName);
+                System.out.println("FirefighterAgent created: " + agentName + " at position (" + x + ", " + y + ")");
+            } catch (Exception e) {
+                System.err.println("Failed to create FirefighterAgent: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+    public void removeFirefighterAgent(String agentName) {
+        activeFirefighterAgents.remove(agentName);
     }
+
+    public List<String> getActiveFirefighterAgents() {
+        return new ArrayList<>(activeFirefighterAgents);
+    }
+
+    // Method to create multiple firefighters at random positions
+    public void createRandomFirefighters(int count) {
+        Random random = new Random();
+        int created = 0;
+        int attempts = 0;
+        int maxAttempts = count * 10; // Prevent infinite loop
+
+        while (created < count && attempts < maxAttempts) {
+            int x = random.nextInt(WIDTH);
+            int y = random.nextInt(HEIGHT);
+
+            Tile tile = getTile(x, y);
+            if (tile != null && tile.getType() != 6) { // Not water
+                createFirefighterAgent(x, y);
+                created++;
+            }
+            attempts++;
+        }
+
+        System.out.println("Created " + created + " firefighter agents");
+    }
+
+    // Enable/disable firefighter deployment
+    public void enableFirefighters(boolean enable) {
+        this.firefightersEnabled = enable;
+        if (enable) {
+            System.out.println("Firefighters enabled - they will be deployed when fires are detected");
+        } else {
+            System.out.println("Firefighters disabled");
+        }
+    }
+
+    // Auto-deploy firefighters when fires appear (call this in your main simulation loop)
+        public void checkAndDeployFirefighters() {
+            if (!firefightersEnabled) return;
+
+            // Count active fires
+            int fireCount = 0;
+            for (int x = 0; x < WIDTH; x++) {
+                for (int y = 0; y < HEIGHT; y++) {
+                    Tile tile = getTile(x, y);
+                    if (tile != null && tile.getType() == 4) { // Fire tile
+                        fireCount++;
+                    }
+                }
+            }
+
+            // Deploy firefighters if there are fires but no active firefighters
+            if (fireCount > 0 && activeFirefighterAgents.isEmpty()) {
+                int firefightersToCreate = Math.min(3, (fireCount / 5) + 1); // Scale with fire count
+                createRandomFirefighters(firefightersToCreate);
+            }
+        }
+
+
+
+}

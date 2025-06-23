@@ -308,6 +308,7 @@ public class MapPanel extends JFrame {
                     return getColorFireIntensity(tile); // Em Chamas (vermelho)
                 case 5: return new Color(170, 170, 170); // Queimado (cinza)
                 case 6: return new Color(30, 144, 255); // Água (azul)
+                case 7: return new Color(255, 0, 0); // Água (azul)
                 default: return Color.BLACK;
             }
         }
