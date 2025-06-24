@@ -105,7 +105,7 @@ public class FireAgent extends Agent {
                 if (neighbor == null) continue;
 
                 int nType = neighbor.getType();
-                if (nType == 0 || nType == 5 || nType == 6 || nType == 4) continue;
+                if (nType == 0 || nType == 5 || nType == 6 || nType == 4 || nType == 7) continue;
 
                 double p = probMonteAlegreAdaptada(neighbor);
 

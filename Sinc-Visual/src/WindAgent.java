@@ -25,7 +25,7 @@ public class WindAgent extends Agent {
         initializeGlobalWind();
 
         addBehaviour(new WindUpdateBehaviour(this, UPDATE_INTERVAL));
-        addBehaviour(new WindRequestBehaviour());
+        //addBehaviour(new WindRequestBehaviour());
 
         System.out.println("WindAgent " + getLocalName() + " started with initial wind: " +
                 globalWindDirection + " at " + globalWindVelocity + " m/s");
@@ -100,45 +100,6 @@ public class WindAgent extends Agent {
         }
     }
 
-
-    private class WindRequestBehaviour extends CyclicBehaviour {
-        @Override
-        public void action() {
-            MessageTemplate template = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
-            ACLMessage msg = receive(template);
-
-            if (msg != null) {
-                String content = msg.getContent();
-                ACLMessage reply = msg.createReply();
-
-                if ("GET_WIND_INFO".equals(content)) {
-                    reply.setPerformative(ACLMessage.INFORM);
-                    reply.setContent(globalWindDirection.name() + "," + globalWindVelocity);
-                    send(reply);
-                }
-                else if (content.startsWith("TERMINATE:")) {
-                    String reason = content.substring(10); // Remove "TERMINATE:" prefix
-                    System.out.println("WindAgent received termination request: " + reason);
-
-                    reply.setPerformative(ACLMessage.CONFIRM);
-                    reply.setContent("TERMINATING");
-                    send(reply);
-
-                    doDelete();
-                    return;
-                }
-                else {
-                    reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
-                    reply.setContent("Unknown request: " + content);
-                    send(reply);
-                }
-
-            }
-            else {
-                block();
-            }
-        }
-    }
 
     @Override
     protected void takeDown() {
